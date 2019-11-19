@@ -1,27 +1,21 @@
-instance: 
-  - "gcp-instance-1"
-  - "aws-instance-1"
-  - "on-premise-centos7"
-
-"gcp-instance-1":
-  instance-type: "gcp"
-  account:
-    name: "hoge"
-    password: "password"
-
-"aws-instance-1":
-  instance-type: "aws"
-  account:
-    name: "hoge"
-    password: "password"
-    
-"on-premise-centos7":
-  instance-type: "on-premise"
-  os: "centos7" 
-  account:
-    name: "hoge"
-    password: "password"
-
+instances: 
+  "gcp-instance-1": 
+    instance-type: "gcp"
+    account:
+      name: "hoge"
+      password: "password"
+  "aws-instance-1":
+    instance-type: "aws"
+    account:
+      name: "hoge"
+      password: "password"
+  "on-premise-centos7":
+    instance-type: "on-premise"
+    os: "centos7" 
+    account:
+      name: "hoge"
+      password: "password"
+      
 firewall:
   allow:
     - "22/tcp"
