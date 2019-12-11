@@ -22,5 +22,19 @@ firewall:
     - "80/tcp"
     - "443/tcp"
   apply-instance:
-    - "gcp-instance"
+    - "gcp-instance-1"
     - "on-premise-centos7"
+
+virtual-machines:
+  # "#-debian" -> GCP:gcp-instance-1-debian AWS:aws-instance-1-debian
+  "#-debian":
+    disks:
+      # "persistent" -> GCE:PERSISTENT EC2:EBS
+      type: "persistent" 
+      size-gbyte: 10
+    ec2-instance-type: "t1.micro"
+    gce-source-image: "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian"
+    ec2-source-image-id: "IMAGE_ID"
+    apply-instance:
+      - "gcp-instance"
+      - "aws-insrance-1"
