@@ -1,0 +1,12 @@
+version: '3'
+services:
+  db:
+    container_name: mhcml.db
+    build:
+      context: ./db/
+    environment:
+      MYSQL_HOST: mhcml_db
+      MYSQL_DATABASE: mhcml_process
+      MYSQL_ROOT_PASSWORD: hogehoge
+    ports:
+      - "3307:3306"

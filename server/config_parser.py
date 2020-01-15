@@ -1,14 +1,27 @@
 import yaml
+import pymysql
+import json
 
 
-def parse_config():
-    file_path = input('file path => ')
-    configs = load_file(file_path)
-    parse_instances(configs)
-    parse_configs(configs)
+def parse_config(file_path) -> object:
+    """
+    return instances object and configs object
+    :param file_path: configfile path
+    :return: instances object, configs object
+    """
+    if file_path is False:
+        configs = _load_file(input('file path => '))
+    else:
+        configs = _load_file(file_path)
+
+    instances = _parse_instances(configs)
+    configs = _parse_configs(configs)
+    connection = _db_init()
+    _insert_target_instances(connection, instances)
+    return instances, configs
 
 
-def load_file(file_path: str) -> dict:
+def _load_file(file_path: str) -> dict:
     """
     load yaml file
     :param file_path: configfile path
@@ -20,20 +33,57 @@ def load_file(file_path: str) -> dict:
     return configs
 
 
-def parse_instances(configs: dict) -> object:
+def _parse_instances(configs: dict) -> object:
+    """
+    config parse
+    :param configs: config dict
+    :return: instances
+    """
     instances = []
     for key, value in configs['instances'].items():
-        instances = Instance(key, instance_type=value['instance-type'], account=value['account'])
+        instances.append(Instance(key, instance_type=value['instance-type'], account=value['account']))
 
+    # print(instances)
     return instances
 
 
-def parse_configs(configs: dict) -> object:
+def _parse_configs(configs: dict) -> object:
     config_contents = []
     for key in configs.keys():
-        config_contents = ConfigContent(key, configs[key])
-
+        config_contents.append(ConfigContent(key, configs[key]))
+    # print(config_contents)
     return config_contents
+
+
+def _db_init():
+    connection = pymysql.connect(host='127.0.0.1',
+                                 port=3307,
+                                 user='root',
+                                 password='hogehoge',
+                                 db='mhcml_process',
+                                 charset='utf8')
+    return connection
+
+
+def _insert_target_instances(connection: pymysql.connect, instances: dict):
+    try:
+        with connection as cursor:
+            query = \
+                "INSERT INTO target_instances (`type`, `authenticate`) values(%s, %s)"
+            for instance in instances:
+                r = cursor.execute(query, (instance.instance_type, json.dumps(instance.account)))
+
+    except Exception as e:
+        print(e)
+
+
+def _insert_process(connection: pymysql.connect):
+    try:
+        with connection as cursor:
+            query = "INSERT INTO processes (`type`, `action`, `target_instance_id`, finished) values(%s, %s, %d, %s)"
+            r = cursor.execute(query, ())
+    except Exception as e:
+        print(e)
 
 
 class Instance:
@@ -52,4 +102,4 @@ class ConfigContent:
 
 
 if __name__ == '__main__':
-    parse_config()
+    parse_config(input('file path => '))

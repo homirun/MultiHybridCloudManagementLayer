@@ -3,8 +3,7 @@ instances:
   "gcp-instance-1": 
     instance-type: "gcp"
     account:
-      name: "hoge"
-      password: "password"
+      credential_file_path: "./MHCML-TEST-831febb010b5.json"
   "aws-instance-1":
     instance-type: "aws"
     account:
@@ -33,6 +32,8 @@ virtual-machines:
     storage-size-gbyte: 50
     memory-size-mbyte: 1024
     target-os: "debian"
+    network:
+      name: "network-instance"
     apply-instance:
       - "gcp-instance"
       - "aws-instance-1"
